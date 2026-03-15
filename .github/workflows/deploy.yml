@@ -15,18 +15,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          persist-credentials: true
           fetch-depth: 0
 
-      - name: Prepare tokens
-        run: |
-          echo "You can set a personal access token secret named GH_PAGES_PAT to avoid push permission issues."
-          echo "Current token is GITHUB_TOKEN (auto)."
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Install dependencies
@@ -35,20 +29,13 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Debug repo state
-        run: |
-          git remote -v
-          git branch
-          git status
+      - name: Configure Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./dist
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          personal_token: ${{ secrets.GH_PAGES_PAT }}
-          publish_dir: ./dist
-          publish_branch: gh-pages
-          user_name: github-actions[bot]
-          user_email: github-actions[bot]@users.noreply.github.com
-          allow_empty_commit: true
-          keep_files: true
+        uses: actions/deploy-pages@v1
