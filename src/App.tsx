@@ -33,6 +33,9 @@ const FadeIn = ({ children, delay = 0, ...props }: { children: React.ReactNode, 
 export default function App() {
   const [chatStep, setChatStep] = useState(0);
   const [isApproved, setIsApproved] = useState(false);
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState('');
 
   useEffect(() => {
     const timer1 = setTimeout(() => setChatStep(1), 1000);
@@ -57,6 +60,43 @@ export default function App() {
 
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setIsSubmitting(true);
+    setSubmitMessage('');
+
+    try {
+      // Store email in localStorage as a simple "database"
+      const waitlist = JSON.parse(localStorage.getItem('orkestral_waitlist') || '[]');
+      if (!waitlist.includes(email)) {
+        waitlist.push(email);
+        localStorage.setItem('orkestral_waitlist', JSON.stringify(waitlist));
+      }
+      const subject = 'Interesse no Orkestral (Lista de Espera)';
+      const body = [
+        'Olá, equipe Orkestral!',
+        '',
+        'Tenho interesse em participar da lista de espera do MVP.',
+        '',
+        `Meu e-mail: ${email}`,
+        '',
+        'Obrigado!'
+      ].join('\n');
+      const mailtoUrl = `mailto:orkestrala.i@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailtoUrl;
+
+      setSubmitMessage('Obrigado! Abrimos seu e-mail com uma mensagem pronta.');
+      setEmail('');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      setSubmitMessage('Erro ao abrir o e-mail. Tente novamente ou envie para orkestrala.i@gmail.com.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const logoUrl = new URL('../assets/images/logo.png', import.meta.url).href;
@@ -443,20 +483,28 @@ export default function App() {
                 Junte-se à lista de espera exclusiva para o nosso MVP e revolucione a forma como você lida com infraestrutura.
               </p>
               
-              <form className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto" onSubmit={(e) => e.preventDefault()}>
+              <form className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto" onSubmit={handleSubmit}>
                 <input 
                   type="email" 
                   placeholder="Seu melhor e-mail profissional" 
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="flex-1 px-6 py-4 rounded-lg bg-slate-950 border border-slate-700 focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 outline-none transition-all text-white placeholder:text-slate-500"
                 />
                 <button 
                   type="submit"
-                  className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg transition-all whitespace-nowrap"
+                  disabled={isSubmitting}
+                  className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-600 text-slate-950 font-bold rounded-lg transition-all whitespace-nowrap disabled:cursor-not-allowed"
                 >
-                  Entrar na Lista
+                  {isSubmitting ? 'Enviando...' : 'Entrar na Lista'}
                 </button>
               </form>
+              {submitMessage && (
+                <p className={`text-sm mt-4 ${submitMessage.includes('Erro') ? 'text-red-400' : 'text-emerald-400'}`}>
+                  {submitMessage}
+                </p>
+              )}
               <p className="text-sm text-slate-500 mt-6">
                 Vagas limitadas para o beta fechado. Sem spam, prometemos.
               </p>
