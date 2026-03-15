@@ -31,11 +31,19 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Debug repo state
+        run: |
+          git remote -v
+          git branch
+          git status
+
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           publish_branch: gh-pages
           user_name: github-actions[bot]
           user_email: github-actions[bot]@users.noreply.github.com
+          allow_empty_commit: true
+          keep_files: true
