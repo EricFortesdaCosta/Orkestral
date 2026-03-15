@@ -59,13 +59,15 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const logoUrl = new URL('../assets/images/logo.png', import.meta.url).href;
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 font-sans selection:bg-emerald-500/30">
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3 font-bold text-xl tracking-tight cursor-pointer" onClick={handleScrollToTop}>
-            <img src="/assets/images/logo.png" alt="Orkestral" className="h-10 w-auto rounded-md" />
+            <img src={logoUrl} alt="Orkestral" className="h-10 w-auto rounded-md" />
             <span>Orkestral</span>
           </div>
           <a href="#waitlist" className="text-sm font-medium hover:text-emerald-400 transition-colors">
@@ -466,7 +468,7 @@ export default function App() {
       <footer className="py-8 border-t border-slate-800/50 text-center text-slate-500 text-sm">
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2 font-bold text-lg tracking-tight text-slate-300 cursor-pointer" onClick={handleScrollToTop}>
-            <img src="/assets/images/logo.png" alt="Orkestral" className="h-6 w-auto rounded-md" />
+            <img src={logoUrl} alt="Orkestral" className="h-6 w-auto rounded-md" />
             <span>Orkestral</span>
           </div>
           <p>© {new Date().getFullYear()} Orkestral. Desenvolvido por <a href="https://www.linkedin.com/in/ericcostaw/" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">Eric Costa</a>. Todos os direitos reservados.</p>
